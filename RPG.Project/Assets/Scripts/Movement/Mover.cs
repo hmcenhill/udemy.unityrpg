@@ -17,8 +17,6 @@ public class Mover : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
-    Ray lastRay;
-
     void Update()
     {
         MoveCharacter();
