@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Core;
+﻿using Assets.Scripts.Combat;
+using Assets.Scripts.Core;
 using RPG.Movement;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace RPG.Combat
         public CombatTarget Target;
         public float AttackRange => 2.0f;
         public float AttackSpeed => 2.0f;
+        public float AttackDamage => 5.0f;
         private float timeSinceLastAttack = 0;
 
         private Mover _mover;
@@ -41,8 +43,14 @@ namespace RPG.Combat
             if (timeSinceLastAttack >= AttackSpeed)
             {
                 timeSinceLastAttack = 0;
-                GetComponent<Animator>().SetTrigger("attack");
+                GetComponent<Animator>().SetTrigger("attack"); // Triggers Hit() event
             }
+        }
+
+        // Animation Event
+        private void Hit()
+        {
+            Target.GetComponent<Health>().TakeDamage(AttackDamage);
         }
 
         private bool IsInAttackRange(Vector3 position) => Vector3.Distance(this.gameObject.transform.position, position) <= AttackRange;
@@ -61,11 +69,5 @@ namespace RPG.Combat
             CancelAttack();
         }
         public void CancelAttack() => Target = null;
-
-        // Animation Event
-        private void Hit()
-        {
-
-        }
     }
 }
