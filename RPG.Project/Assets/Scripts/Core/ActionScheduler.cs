@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Assets.Scripts.Core;
 
-public class ActionScheduler : MonoBehaviour
+namespace RPG.Core
 {
-    IAction currentAction;
-    public void StartAction(IAction action)
+    public class ActionScheduler : MonoBehaviour
     {
-        if (currentAction == action) return;
-        if (currentAction != null)
+        IAction currentAction;
+        public void StartAction(IAction action)
         {
-            currentAction.Cancel();
+            if (currentAction == action) return;
+            if (currentAction != null)
+            {
+                currentAction.Cancel();
+            }
+            currentAction = action;
         }
-        currentAction = action;
     }
-
 }

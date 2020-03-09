@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Combat;
-using Assets.Scripts.Core;
+﻿using RPG.Core;
 using RPG.Movement;
 using UnityEngine;
 
@@ -40,9 +39,16 @@ namespace RPG.Combat
 
         private void AttackBehavior()
         {
+            this.transform.LookAt(Target.transform);
+            if (Target.gameObject.GetComponent<Health>().IsDead)
+            {
+                Cancel();
+                return;
+            }
             if (timeSinceLastAttack >= AttackSpeed)
             {
                 timeSinceLastAttack = 0;
+                GetComponent<Animator>().ResetTrigger("stopAttack");
                 GetComponent<Animator>().SetTrigger("attack"); // Triggers Hit() event
             }
         }
@@ -50,6 +56,7 @@ namespace RPG.Combat
         // Animation Event
         private void Hit()
         {
+            if (Target == null) return;
             Target.GetComponent<Health>().TakeDamage(AttackDamage);
         }
 
@@ -66,8 +73,12 @@ namespace RPG.Combat
 
         public void Cancel()
         {
+            GetComponent<Animator>().ResetTrigger("attack");
+            GetComponent<Animator>().SetTrigger("stopAttack");
             CancelAttack();
         }
         public void CancelAttack() => Target = null;
+
+        public bool CanAttack() => Target != null && !Target.GetComponent<Health>().IsDead;
     }
 }

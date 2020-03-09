@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Core;
+﻿using RPG.Core;
 using UnityEngine;
 using UnityEngine.AI;
 

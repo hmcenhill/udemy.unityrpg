@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using RPG.Combat;
+﻿using RPG.Combat;
 using RPG.Movement;
 using UnityEngine;
 
@@ -25,6 +23,7 @@ namespace RPG.Control
                     if (Input.GetMouseButtonDown(0))
                     {
                         this.GetComponent<Fighter>().Attack(target);
+                        if (!this.GetComponent<Fighter>().CanAttack()) continue;
                     }
                     return true;
                 }
