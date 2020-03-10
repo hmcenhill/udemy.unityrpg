@@ -7,7 +7,7 @@ namespace RPG.Combat
 
     public class Fighter : MonoBehaviour, IAction
     {
-        public CombatTarget Target;
+        public GameObject Target;
         public float AttackRange => 2.0f;
         public float AttackSpeed => 2.0f;
         public float AttackDamage => 5.0f;
@@ -40,7 +40,7 @@ namespace RPG.Combat
         private void AttackBehavior()
         {
             this.transform.LookAt(Target.transform);
-            if (Target.gameObject.GetComponent<Health>().IsDead)
+            if (Target.GetComponent<Health>().IsDead)
             {
                 Cancel();
                 return;
@@ -61,13 +61,12 @@ namespace RPG.Combat
         }
 
         private bool IsInAttackRange(Vector3 position) => Vector3.Distance(this.gameObject.transform.position, position) <= AttackRange;
-        private Vector3 GetAttackPosition() => Target.gameObject.transform.position;
+        private Vector3 GetAttackPosition() => Target.transform.position;
 
 
-        public void Attack(CombatTarget target)
+        public void Attack(GameObject target)
         {
             this.GetComponent<ActionScheduler>().StartAction(this);
-            print($"Take that you {target.name}!");
             Target = target;
         }
 
