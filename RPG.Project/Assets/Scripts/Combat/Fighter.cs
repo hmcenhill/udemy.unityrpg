@@ -9,9 +9,9 @@ namespace RPG.Combat
     {
         public GameObject Target;
         public float AttackRange => 2.0f;
-        public float AttackSpeed => 2.0f;
+        public float AttackSpeed => 1.0f;
         public float AttackDamage => 5.0f;
-        private float timeSinceLastAttack = 0;
+        private float timeSinceLastAttack = Mathf.Infinity;
 
         private Mover _mover;
 

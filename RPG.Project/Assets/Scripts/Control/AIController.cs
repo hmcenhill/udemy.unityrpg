@@ -1,4 +1,5 @@
 ﻿using RPG.Combat;
+using RPG.Core;
 using RPG.Movement;
 using System;
 using System.Collections;
@@ -10,27 +11,49 @@ namespace RPG.Control
     public class AIController : MonoBehaviour
     {
         [SerializeField] float chaseDistance = 5f;
+        [SerializeField] float suspiciousTime = 3f;
         public GameObject Target = null;
+        private Health health;
+        private Mover mover;
+
         private Vector3 homePoint;
+        private float timeSinceLastSawPlayer = Mathf.Infinity;
+        private Vector3 lastSeen;
         private void Start()
         {
             homePoint = this.transform.position;
+            lastSeen = homePoint;
+            health = this.gameObject.GetComponent<Health>();
+            mover = this.gameObject.GetComponent<Mover>();
         }
         private void Update()
         {
+            if (health.IsDead) return;
             if (Target == null && CheckForEnemies(out var target))
             {
                 Target = target;
             }
-            if(Target != null)
+            if(TargetInRange())
             {
                 Attack();
+                timeSinceLastSawPlayer = 0;
+                lastSeen = Target.transform.position;
             }
-            if (!TargetInRange())
+            else if (Suspicious())
             {
                 this.gameObject.GetComponent<Fighter>().Cancel();
-                this.gameObject.GetComponent<Mover>().StartMoveAction(homePoint);
+                mover.StartMoveAction(lastSeen);
             }
+            else
+            {
+                mover.StartMoveAction(homePoint);
+            }
+            timeSinceLastSawPlayer += Time.deltaTime;
+        }
+
+        private bool Suspicious()
+        {
+            return timeSinceLastSawPlayer < suspiciousTime;
         }
 
         private bool TargetInRange()
@@ -42,6 +65,10 @@ namespace RPG.Control
         private void Attack()
         {
             this.gameObject.GetComponent<Fighter>().Attack(Target);
+            if (Target.GetComponent<Health>().IsDead)
+            {
+                Target = null;
+            }
         }
 
         private bool CheckForEnemies(out GameObject target)
@@ -55,6 +82,13 @@ namespace RPG.Control
             }
             target = null;
             return false;
+        }
+
+        // Called by Unity
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(this.gameObject.transform.position, chaseDistance);
         }
     }
 }

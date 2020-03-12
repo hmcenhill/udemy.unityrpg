@@ -6,19 +6,22 @@ namespace RPG.Movement
 {
     public class Mover : MonoBehaviour, IAction
     {
-        private Vector3 _target;
-        private NavMeshAgent _navMeshAgent;
-        private Animator _animator;
+        private Vector3 target;
+        private NavMeshAgent navMeshAgent;
+        private Animator animator;
+        private Health health;
 
         private void Start()
         {
-            _target = this.transform.position;
-            _navMeshAgent = GetComponent<NavMeshAgent>();
-            _animator = GetComponent<Animator>();
+            target = this.transform.position;
+            navMeshAgent = this.GetComponent<NavMeshAgent>();
+            animator = this.GetComponent<Animator>();
+            health = this.GetComponent<Health>();
         }
 
         private void Update()
         {
+            navMeshAgent.enabled = !health.IsDead;
             AnimateCharacter();
         }
 
@@ -30,12 +33,12 @@ namespace RPG.Movement
 
         public void MoveTo(Vector3 destination)
         {
-            _navMeshAgent.destination = destination;
+            navMeshAgent.destination = destination;
         }
 
         public void StopMoving()
         {
-            _navMeshAgent.destination = this.transform.position;
+            navMeshAgent.destination = this.transform.position;
         }
 
         public void Cancel()
@@ -45,9 +48,9 @@ namespace RPG.Movement
 
         private void AnimateCharacter()
         {
-            var globalVelocity = _navMeshAgent.velocity;
+            var globalVelocity = navMeshAgent.velocity;
             var localVelocity = transform.InverseTransformDirection(globalVelocity);
-            _animator.SetFloat("forwardSpeed", localVelocity.z);
+            animator.SetFloat("forwardSpeed", localVelocity.z);
         }
 
     }
