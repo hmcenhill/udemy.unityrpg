@@ -2461,6 +2461,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4172286217625922478, guid: 67647e2aa7fd50641bbb0fc36735d226,
+        type: 3}
+      propertyPath: patrolPath
+      value: 
+      objectReference: {fileID: 124384507}
+    - target: {fileID: 4172286217625922478, guid: 67647e2aa7fd50641bbb0fc36735d226,
+        type: 3}
+      propertyPath: patrolDwellTime
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67647e2aa7fd50641bbb0fc36735d226, type: 3}
 --- !u!1 &1133018891

@@ -18,9 +18,6 @@ namespace RPG.Control
             }
         }
 
-        private Vector3 GetWaypoint(int waypointIndex)
-        {
-            return transform.GetChild(waypointIndex).position;
-        }
+        private Vector3 GetWaypoint(int waypointIndex) => transform.GetChild(waypointIndex).position;
     }
 }

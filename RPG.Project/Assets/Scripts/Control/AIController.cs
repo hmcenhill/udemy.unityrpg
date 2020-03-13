@@ -12,17 +12,24 @@ namespace RPG.Control
     {
         [SerializeField] float chaseDistance = 5f;
         [SerializeField] float suspiciousTime = 3f;
+        [SerializeField] float patrolDwellTime = 2f;
+        [SerializeField] PatrolPath patrolPath;
+        [SerializeField] float patrolCloseEnough = 1f;
+
         public GameObject Target = null;
         private Health health;
         private Mover mover;
 
-        private Vector3 homePoint;
+        private Vector3 currentPatrolPoint;
         private float timeSinceLastSawPlayer = Mathf.Infinity;
+        private float timeDwelling = 0;
         private Vector3 lastSeen;
+        private int currentPatrolWaypointIndex = 0;
+
         private void Start()
         {
-            homePoint = this.transform.position;
-            lastSeen = homePoint;
+            currentPatrolPoint = this.transform.position;
+            lastSeen = currentPatrolPoint;
             health = this.gameObject.GetComponent<Health>();
             mover = this.gameObject.GetComponent<Mover>();
         }
@@ -33,7 +40,7 @@ namespace RPG.Control
             {
                 Target = target;
             }
-            if(TargetInRange())
+            if (TargetInRange())
             {
                 Attack();
                 timeSinceLastSawPlayer = 0;
@@ -46,15 +53,39 @@ namespace RPG.Control
             }
             else
             {
-                mover.StartMoveAction(homePoint);
+                PatrolBehavior();
             }
             timeSinceLastSawPlayer += Time.deltaTime;
         }
 
-        private bool Suspicious()
+        private void PatrolBehavior()
         {
-            return timeSinceLastSawPlayer < suspiciousTime;
+            if (patrolPath != null)
+            {
+                if (AtWayPoint())
+                {
+                    timeDwelling += Time.deltaTime;
+                    if (timeDwelling > patrolDwellTime)
+                    {
+                        CycleWaypoint();
+                        timeDwelling = 0;
+                    }
+                }
+                currentPatrolPoint = GetCurrentWayPoint();
+            }
+            mover.StartMoveAction(currentPatrolPoint);
         }
+
+        private bool AtWayPoint() => Vector3.Distance(this.transform.position, GetCurrentWayPoint()) < patrolCloseEnough;
+
+        private void CycleWaypoint()
+        {
+            currentPatrolWaypointIndex = (currentPatrolWaypointIndex + 1) % patrolPath.transform.childCount;
+        }
+
+        private Vector3 GetCurrentWayPoint() => patrolPath.transform.GetChild(currentPatrolWaypointIndex).position;
+
+        private bool Suspicious() => timeSinceLastSawPlayer < suspiciousTime;
 
         private bool TargetInRange()
         {
